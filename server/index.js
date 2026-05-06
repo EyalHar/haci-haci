@@ -41,10 +41,12 @@ async function getToken() {
 app.get("/api/songs", async (req, res) => {
   try {
     const token = await getToken();
-
+//"https://api.spotify.com/v1/search?q=Queen&type=track&limit=10"
+//"https://api.spotify.com/v1/search?q=Rock israeli&type=track&limit=10",
+//"https://api.spotify.com/v1/search?q=pop israeli&type=track&limit=10",
     // endpoint יותר יציב ללמידה (פותר הרבה 403)
     const response = await axios.get(
-      "https://api.spotify.com/v1/search?q=top&type=track&limit=10",
+      "https://api.spotify.com/v1/search?q=pop israeli&type=track&limit=10",
       {
         headers: {
           Authorization: "Bearer " + token,
@@ -53,10 +55,12 @@ app.get("/api/songs", async (req, res) => {
     );
 
     const songs = response.data.tracks.items.map((item) => ({
-      title: item.name,
-      artist: item.artists[0].name,
-      image: item.album.images[0]?.url,
-    }));
+  title: item.name,
+  artist: item.artists[0].name,
+  image: item.album.images[0]?.url,
+  url: item.external_urls.spotify,
+  preview: item.preview_url, // יכול להיות null
+}));
 
     res.json(songs);
   } catch (err) {
@@ -67,4 +71,113 @@ app.get("/api/songs", async (req, res) => {
 
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
+});
+
+app.get("/api/artists", async (req, res) => {
+  try {
+    const letter = req.query.letter || "A";
+
+    const token = await getToken();
+
+    const response = await axios.get(
+      `https://api.spotify.com/v1/search`,
+      {
+        params: {
+          q: `${letter}*`,
+          type: "artist",
+          limit: 10
+        },
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const artists = response.data.artists.items.map((artist) => ({
+      id: artist.id,
+      name: artist.name,
+      image: artist.images?.[0]?.url,
+    }));
+
+    res.json(artists);
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+    res.status(500).json(err.response?.data || err.message);
+  }
+});
+/*app.get("/api/artist/:id/songs", async (req, res) => {
+  try {
+    const token = await getToken();
+
+    const response = await axios.get(
+      `https://api.spotify.com/v1/artists/${req.params.id}/top-tracks`,
+      {
+        params: {
+          market: "IL"
+        },
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const songs = response.data.tracks.map((item) => ({
+      title: item.name,
+      artist: item.artists[0].name,
+      image: item.album.images[0]?.url,
+      url: item.external_urls.spotify,
+      preview: item.preview_url,
+    }));
+
+    res.json(songs);
+  } catch (err) {
+    console.log("ERROR:", err.response?.data || err.message);
+    res.status(500).json(err.response?.data || err.message);
+  }
+});*/
+
+app.get("/api/artist/:id/songs", async (req, res) => {
+  try {
+    const token = await getToken();
+
+    // קודם מביאים את שם האמן
+    const artistRes = await axios.get(
+      `https://api.spotify.com/v1/artists/${req.params.id}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const artistName = artistRes.data.name;
+
+    // עכשיו מחפשים שירים לפי שם האמן (זה מה שעבד לך קודם!)
+    const response = await axios.get(
+      "https://api.spotify.com/v1/search",
+      {
+        params: {
+          q: artistName,
+          type: "track",
+          limit: 10,
+        },
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const songs = response.data.tracks.items.map((item) => ({
+      title: item.name,
+      artist: item.artists[0].name,
+      image: item.album.images[0]?.url,
+      url: item.external_urls.spotify,
+      preview: item.preview_url,
+    }));
+
+    res.json(songs);
+  } catch (err) {
+    console.log("ERROR:", err.response?.data || err.message);
+    res.status(500).json(err.response?.data || err.message);
+  }
 });
