@@ -16,23 +16,29 @@ export default function Home() {
 
   return (
     <div style={container}>
-      <h1>🎵 הכי הכי - בחר אמן</h1>
+      <h1 style={title}>הכי הכי 🎵</h1>
 
-      <h3>English</h3>
       <div style={letters}>
         {english.map((l) => (
-          <button key={l} onClick={() => fetchArtists(l)}>
+          <button
+            key={l}
+            onClick={() => fetchArtists(l)}
+            style={letterBtn}
+            >
             {l}
-          </button>
+            </button>
         ))}
       </div>
 
-      <h3>עברית</h3>
       <div style={letters}>
         {hebrew.map((l) => (
-          <button key={l} onClick={() => fetchArtists(l)}>
+          <button
+            key={l}
+            onClick={() => fetchArtists(l)}
+            style={letterBtn}
+            >
             {l}
-          </button>
+            </button>
         ))}
       </div>
 
@@ -75,11 +81,33 @@ const grid = {
 
 const card = {
   cursor: "pointer",
+  transition: "0.2s",
 };
-
 const img = {
   width: 150,
   height: 150,
   objectFit: "cover",
   borderRadius: 10,
+};
+
+const title = {
+  fontSize: 48,
+  fontWeight: "900",
+  marginBottom: 30,
+  letterSpacing: "2px",
+  background: "linear-gradient(90deg, #1DB954, #191414)",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+};
+
+const letterBtn = {
+  padding: "10px 14px",
+  margin: 4,
+  borderRadius: 10,
+  border: "none",
+  cursor: "pointer",
+  background: "#1DB954",
+  color: "white",
+  fontWeight: "bold",
+  transition: "0.2s",
 };
