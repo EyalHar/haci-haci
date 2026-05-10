@@ -6,6 +6,7 @@ const hebrew = ["א","ב","ג","ד","ה","ו","ז","ח","ט","י","כ","ל","מ"
 
 export default function Home() {
   const [artists, setArtists] = useState([]);
+  const [hoveredLetter, setHoveredLetter] = useState(null);
   const navigate = useNavigate();
 
   const fetchArtists = (letter) => {
@@ -23,7 +24,9 @@ export default function Home() {
           <button
             key={l}
             onClick={() => fetchArtists(l)}
-            style={letterBtn}
+            style={hoveredLetter === l ? { ...letterBtn, ...letterBtnHover } : letterBtn}
+            onMouseEnter={() => setHoveredLetter(l)}
+            onMouseLeave={() => setHoveredLetter(null)}
             >
             {l}
             </button>
@@ -35,7 +38,9 @@ export default function Home() {
           <button
             key={l}
             onClick={() => fetchArtists(l)}
-            style={letterBtn}
+            style={hoveredLetter === l ? { ...letterBtn, ...letterBtnHover } : letterBtn}
+            onMouseEnter={() => setHoveredLetter(l)}
+            onMouseLeave={() => setHoveredLetter(null)}
             >
             {l}
             </button>
@@ -109,5 +114,11 @@ const letterBtn = {
   background: "#1DB954",
   color: "white",
   fontWeight: "bold",
-  transition: "0.2s",
+  transition: "transform 0.2s, background 0.2s, box-shadow 0.2s",
+};
+
+const letterBtnHover = {
+  background: "#17a347",
+  transform: "scale(1.15)",
+  boxShadow: "0 4px 12px rgba(29,185,84,0.4)",
 };

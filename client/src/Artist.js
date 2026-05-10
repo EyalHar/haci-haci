@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function Artist() {
   const { id } = useParams();
   const [songs, setSongs] = useState([]);
+  const [hoveredBtn, setHoveredBtn] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/artist/${id}/songs`)
@@ -23,8 +24,13 @@ const card = {
   const navigate = useNavigate();
   return (
     <div style={container}>
-        <button onClick={() => navigate(-1)} style={backBtn}>
-            ⬅ חזור
+        <button
+          onClick={() => navigate(-1)}
+          style={hoveredBtn === "top" ? { ...backBtn, ...backBtnHover } : backBtn}
+          onMouseEnter={() => setHoveredBtn("top")}
+          onMouseLeave={() => setHoveredBtn(null)}
+        >
+          ⬅ חזור
         </button>
       <h1>🎤 שירים מובילים</h1>
 
@@ -46,9 +52,14 @@ const card = {
         </div>
       ))}
 
-      <button onClick={() => navigate(-1)} style={backBtn}>
-            ⬅ חזור
-        </button>
+      <button
+        onClick={() => navigate(-1)}
+        style={hoveredBtn === "bottom" ? { ...backBtn, ...backBtnHover } : backBtn}
+        onMouseEnter={() => setHoveredBtn("bottom")}
+        onMouseLeave={() => setHoveredBtn(null)}
+      >
+        ⬅ חזור
+      </button>
     </div>
   );
 }
@@ -72,4 +83,11 @@ const backBtn = {
   background: "#1DB954",
   color: "white",
   fontWeight: "bold",
+  transition: "transform 0.2s, background 0.2s, box-shadow 0.2s",
+};
+
+const backBtnHover = {
+  background: "#17a347",
+  transform: "scale(1.07)",
+  boxShadow: "0 4px 12px rgba(29,185,84,0.4)",
 };
