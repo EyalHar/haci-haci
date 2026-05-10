@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext";
 
 const english = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const hebrew = ["א","ב","ג","ד","ה","ו","ז","ח","ט","י","כ","ל","מ","נ","ס","ע","פ","צ","ק","ר","ש","ת"];
@@ -9,7 +8,6 @@ export default function Home() {
   const [artists, setArtists] = useState([]);
   const [hoveredLetter, setHoveredLetter] = useState(null);
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
 
   const fetchArtists = (letter) => {
     fetch(`http://localhost:5000/api/artists?letter=${letter}`)
@@ -19,12 +17,6 @@ export default function Home() {
 
   return (
     <div style={container}>
-      <div style={header}>
-        <span style={userInfo}>👤 {user?.name}</span>
-        <button onClick={() => { logout(); navigate("/login"); }} style={logoutBtn}>
-          יציאה
-        </button>
-      </div>
       <h1 style={title}>הכי הכי 🎵</h1>
 
       <div style={letters}>
@@ -35,9 +27,9 @@ export default function Home() {
             style={hoveredLetter === l ? { ...letterBtn, ...letterBtnHover } : letterBtn}
             onMouseEnter={() => setHoveredLetter(l)}
             onMouseLeave={() => setHoveredLetter(null)}
-            >
+          >
             {l}
-            </button>
+          </button>
         ))}
       </div>
 
@@ -49,20 +41,16 @@ export default function Home() {
             style={hoveredLetter === l ? { ...letterBtn, ...letterBtnHover } : letterBtn}
             onMouseEnter={() => setHoveredLetter(l)}
             onMouseLeave={() => setHoveredLetter(null)}
-            >
+          >
             {l}
-            </button>
+          </button>
         ))}
       </div>
 
       <div style={grid}>
         {artists.map((a) => (
-          <div
-            key={a.id}
-            style={card}
-            onClick={() => navigate(`/artist/${a.id}`)}
-          >
-            <img src={a.image} style={img} />
+          <div key={a.id} style={card} onClick={() => navigate(`/artist/${a.id}`)}>
+            <img src={a.image} style={img} alt={a.name} />
             <p>{a.name}</p>
           </div>
         ))}
@@ -96,6 +84,7 @@ const card = {
   cursor: "pointer",
   transition: "0.2s",
 };
+
 const img = {
   width: 150,
   height: 150,
@@ -129,28 +118,4 @@ const letterBtnHover = {
   background: "#17a347",
   transform: "scale(1.15)",
   boxShadow: "0 4px 12px rgba(29,185,84,0.4)",
-};
-
-const header = {
-  display: "flex",
-  justifyContent: "flex-end",
-  alignItems: "center",
-  gap: 12,
-  marginBottom: 10,
-};
-
-const userInfo = {
-  fontSize: 14,
-  color: "#555",
-};
-
-const logoutBtn = {
-  padding: "6px 14px",
-  borderRadius: 8,
-  border: "1px solid #ccc",
-  cursor: "pointer",
-  background: "#fff",
-  color: "#333",
-  fontSize: 13,
-  transition: "background 0.2s",
 };
