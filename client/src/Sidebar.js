@@ -14,8 +14,9 @@ export default function Sidebar() {
   }
 
   const items = [
-    { path: "/",          label: "אמנים",    icon: "🎤" },
-    { path: "/favorites", label: "מועדפים",   icon: "❤️" },
+    { path: "/",          label: "אמנים",  icon: "🎤" },
+    { path: "/favorites", label: "מועדפים", icon: "❤️" },
+    { path: "/about",     label: "אודות",   icon: "ℹ️" },
   ];
 
   return (

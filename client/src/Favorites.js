@@ -12,7 +12,7 @@ export default function Favorites() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
-      .then((data) => { setFavorites(data); setLoading(false); });
+      .then((data) => { setFavorites(Array.isArray(data) ? data : []); setLoading(false); });
   }, []);
 
   async function removeFavorite(songId) {

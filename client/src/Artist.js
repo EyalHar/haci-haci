@@ -19,7 +19,8 @@ export default function Artist() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
-      .then((data) => setFavorites(new Set(data.map((f) => f.songId))));
+      .then((data) => setFavorites(new Set(Array.isArray(data) ? data.map((f) => f.songId) : [])))
+      .catch(() => {});
   }, [id]);
 
   async function toggleFavorite(song) {

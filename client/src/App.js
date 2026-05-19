@@ -6,6 +6,7 @@ import Home from "./Home";
 import Artist from "./Artist";
 import Login from "./Login";
 import Favorites from "./Favorites";
+import About from "./About";
 
 function Layout({ children }) {
   const sidebarWidth = 200;
@@ -35,6 +36,7 @@ function App() {
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/artist/:id" element={<ProtectedRoute><Artist /></ProtectedRoute>} />
             <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+            <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
