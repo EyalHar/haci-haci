@@ -7,17 +7,34 @@ const hebrew = ["א","ב","ג","ד","ה","ו","ז","ח","ט","י","כ","ל","מ"
 export default function Home() {
   const [artists, setArtists] = useState([]);
   const [hoveredLetter, setHoveredLetter] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
-  const fetchArtists = (letter) => {
-    fetch(`http://localhost:5000/api/artists?letter=${letter}`)
+  const fetchArtists = (query) => {
+    fetch(`http://localhost:5000/api/artists?letter=${encodeURIComponent(query)}`)
       .then((res) => res.json())
-      .then((data) => setArtists(data));
+      .then((data) => setArtists(Array.isArray(data) ? data : []));
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchText.trim()) fetchArtists(searchText.trim());
   };
 
   return (
     <div style={container}>
       <h1 style={title}>הכי הכי 🎵</h1>
+
+      <form onSubmit={handleSearch} style={searchForm}>
+        <input
+          style={searchInput}
+          type="text"
+          placeholder="חפש אמן לפי שם..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+        <button type="submit" style={searchBtn}>🔍</button>
+      </form>
 
       <div style={letters}>
         {english.map((l) => (
@@ -118,4 +135,32 @@ const letterBtnHover = {
   background: "#17a347",
   transform: "scale(1.15)",
   boxShadow: "0 4px 12px rgba(29,185,84,0.4)",
+};
+
+const searchForm = {
+  display: "flex",
+  justifyContent: "center",
+  gap: 8,
+  marginBottom: 24,
+};
+
+const searchInput = {
+  padding: "10px 16px",
+  borderRadius: 10,
+  border: "2px solid #1DB954",
+  fontSize: 15,
+  width: 240,
+  outline: "none",
+  fontFamily: "Arial",
+  direction: "rtl",
+};
+
+const searchBtn = {
+  padding: "10px 16px",
+  borderRadius: 10,
+  border: "none",
+  background: "#1DB954",
+  color: "white",
+  fontSize: 16,
+  cursor: "pointer",
 };
