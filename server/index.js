@@ -132,6 +132,32 @@ app.get("/api/artists", async (req, res) => {
   }
 });
 
+app.get("/api/songs/search", async (req, res) => {
+  try {
+    const q = req.query.q;
+    if (!q) return res.status(400).json({ error: "Missing query" });
+    const token = await getToken();
+    console.log("SONG SEARCH query:", q, "| encoded:", encodeURIComponent(q));
+    const response = await axios.get("https://api.spotify.com/v1/search", {
+      params: { q, type: "track", limit: 10 },
+      headers: { Authorization: "Bearer " + token },
+    });
+    console.log(`SONG SEARCH: "${q}" → ${response.data.tracks.items.length} results`);
+    const songs = response.data.tracks.items.map((item) => ({
+      songId: item.id,
+      title: item.name,
+      artist: item.artists[0].name,
+      image: item.album.images[0]?.url,
+      url: item.external_urls.spotify,
+      preview: item.preview_url,
+    }));
+    res.json(songs);
+  } catch (err) {
+    console.log("SONG SEARCH ERROR:", err.response?.data || err.message);
+    res.status(500).json(err.response?.data || err.message);
+  }
+});
+
 app.get("/api/artist/:id/songs", async (req, res) => {
   try {
     const token = await getToken();
@@ -159,4 +185,5 @@ app.get("/api/artist/:id/songs", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("Server running on http://localhost:5000"));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
